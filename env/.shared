@@ -1,4 +1,15 @@
-# replace with your environment variables
+# Firebase Configuration
 
-VITE_ENV_VAR_1=
-VITE_ENV_VAR_2=
+# Get these values from your Firebase Console: <https://console.firebase.google.com/>
+
+VITE_FIREBASE_API_KEY=AIzaSyDyPocH5O7uwMRBRa4yoei_SX_IQnYdaZ0
+VITE_FIREBASE_AUTH_DOMAIN=qr-transfers.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=qr-transfers
+VITE_FIREBASE_STORAGE_BUCKET=qr-transfers.firebasestorage.app
+VITE_FIREBASE_MESSAGING_SENDER_ID=208871776
+VITE_FIREBASE_APP_ID=1:208871776:web:1b91c71aba571b000d7e05
+VITE_FIREBASE_MEASUREMENT_ID=G-D8L18HJ2V2
+
+# App Domain (production)
+
+VITE_APP_DOMAIN=<https://qr-transfers.web.app>
