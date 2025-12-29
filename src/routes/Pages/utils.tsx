@@ -1,8 +1,8 @@
 import { Route } from 'react-router';
 
-import type { Theme } from '@mui/material';
 
-import { objectInsertIf } from '@/utils/insertIf';
+
+import type { Theme } from '@mui/material';
 
 import { Routes } from '../types';
 
@@ -19,8 +19,8 @@ function renderRoutes(routes: Routes) {
         key={path}
         path={path}
         element={<Component />}
-        {...objectInsertIf(nestedRoutes, {
-          children: nestedRoutes && renderRoutes(nestedRoutes as Routes),
+        {...(nestedRoutes && {
+          children: renderRoutes(nestedRoutes as Routes),
         })}
       />
     );

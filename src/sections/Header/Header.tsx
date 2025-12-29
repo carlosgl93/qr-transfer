@@ -1,29 +1,25 @@
-import GitHubIcon from '@mui/icons-material/GitHub';
+import { useNavigate } from 'react-router';
+
 import ThemeIcon from '@mui/icons-material/InvertColors';
+import LogoutIcon from '@mui/icons-material/Logout';
 import MenuIcon from '@mui/icons-material/Menu';
-import { AppBar, Button, Divider, IconButton, Stack, Toolbar, Tooltip } from '@mui/material';
+import { AppBar, IconButton, Stack, Toolbar, Tooltip, Typography } from '@mui/material';
 
-import { useNotifications } from '@toolpad/core/useNotifications';
-
-import { repository, title } from '@/config';
-import { useHotKeysDialog } from '@/sections/HotKeys/hooks';
+import { title } from '@/config';
+import { useAuth } from '@/hooks/useAuth';
 import { useSidebar } from '@/sections/Sidebar/hooks';
 import { useThemeMode } from '@/theme';
-
-import { HotKeysButton } from './styled';
-import { getRandomJoke } from './utils';
 
 function Header() {
   const { themeMode, toggle: toggleThemeMode } = useThemeMode();
   const { open: openSidebar } = useSidebar();
-  const { open: openHotKeysDialog } = useHotKeysDialog();
-  const notifications = useNotifications();
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
 
-  function showNotification() {
-    notifications.show(getRandomJoke(), {
-      autoHideDuration: 5000,
-    });
-  }
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
+  };
 
   return (
     <AppBar
@@ -45,32 +41,14 @@ function Header() {
             >
               <MenuIcon />
             </IconButton>
-            <Button onClick={showNotification} color="info">
+            <Typography variant="h6" component="div" color="info">
               {title}
-            </Button>
+            </Typography>
           </Stack>
-          <Stack direction="row" alignItems="center">
-            <Tooltip title="Hot keys" arrow>
-              <HotKeysButton
-                size="small"
-                variant="outlined"
-                aria-label="open hotkeys dialog"
-                onClick={openHotKeysDialog}
-              >
-                alt + k
-              </HotKeysButton>
-            </Tooltip>
-            <Divider orientation="vertical" flexItem />
-            <Tooltip title="It's open source" arrow>
-              <IconButton color="info" size="large" component="a" href={repository} target="_blank">
-                <GitHubIcon />
-              </IconButton>
-            </Tooltip>
-            <Divider orientation="vertical" flexItem />
-            <Tooltip title="Switch theme" arrow>
+          <Stack direction="row" alignItems="center" gap={1}>
+            <Tooltip title="Cambiar tema" arrow>
               <IconButton
                 color="info"
-                edge="end"
                 size="large"
                 onClick={toggleThemeMode}
                 data-pw="theme-toggle"
@@ -78,6 +56,13 @@ function Header() {
                 <ThemeIcon />
               </IconButton>
             </Tooltip>
+            {user && (
+              <Tooltip title="Cerrar sesión" arrow>
+                <IconButton color="info" size="large" onClick={handleSignOut}>
+                  <LogoutIcon />
+                </IconButton>
+              </Tooltip>
+            )}
           </Stack>
         </Stack>
       </Toolbar>
