@@ -3,9 +3,17 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import HomeIcon from '@mui/icons-material/Home';
 import LoginIcon from '@mui/icons-material/Login';
 
+
+
 import asyncComponentLoader from '@/utils/loader';
 
+
+
 import { Routes } from './types';
+
+
+
+
 
 const routes: Routes = [
   {
@@ -39,6 +47,10 @@ const routes: Routes = [
   {
     component: asyncComponentLoader(() => import('@/pages/ScanLanding')),
     path: '/scan',
+  },
+  {
+    component: asyncComponentLoader(() => import('@/pages/ClaimQR')),
+    path: '/claim/:token',
   },
   {
     component: asyncComponentLoader(() => import('@/pages/NotFound')),

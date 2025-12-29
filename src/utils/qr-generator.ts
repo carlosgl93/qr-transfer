@@ -1,14 +1,18 @@
 import QRCode from 'qrcode';
-import { APP_DOMAIN } from '@/config/firebase';
+
+import { BankAccount } from '@/types/bank-account';
+
+import { formatBankAccountForClipboard } from './clipboard-handler';
 
 /**
- * Generates a QR code data URL from an account ID
+ * Generates a QR code data URL from bank account data
  */
-export async function generateQRCode(accountId: string): Promise<string> {
+export async function generateQRCode(account: BankAccount): Promise<string> {
   try {
-    const url = `${APP_DOMAIN}/scan?id=${accountId}`;
-    
-    const qrCodeDataUrl = await QRCode.toDataURL(url, {
+    // Format the bank account data as text
+    const dataText = formatBankAccountForClipboard(account);
+
+    const qrCodeDataUrl = await QRCode.toDataURL(dataText, {
       width: 400,
       margin: 2,
       color: {
@@ -17,7 +21,7 @@ export async function generateQRCode(accountId: string): Promise<string> {
       },
       errorCorrectionLevel: 'M',
     });
-    
+
     return qrCodeDataUrl;
   } catch (error) {
     console.error('Error generating QR code:', error);
@@ -35,11 +39,4 @@ export function downloadQRCode(dataUrl: string, filename: string = 'qr-code.png'
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
-}
-
-/**
- * Generates a shareable URL for an account
- */
-export function generateShareableUrl(accountId: string): string {
-  return `${APP_DOMAIN}/scan?id=${accountId}`;
 }

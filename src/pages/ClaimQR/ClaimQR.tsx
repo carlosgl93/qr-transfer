@@ -1,55 +1,58 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router';
-
-
-
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Container,
+  Stack,
+  Typography,
+  Alert,
+  CircularProgress,
+} from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
-import { Alert, Box, Button, Card, CardContent, Container, IconButton, Stack, Typography } from '@mui/material';
-
-
-
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import { useParams } from 'react-router';
 import { useNotifications } from '@toolpad/core/useNotifications';
-import { doc, getDoc } from 'firebase/firestore';
-
-
-
-import Loading from '@/components/Loading';
-import ProtectedRoute from '@/components/ProtectedRoute';
+import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '@/config/firebase';
-import { useAuth } from '@/hooks/useAuth';
-import { BankAccount } from '@/types/bank-account';
+import { ShareableAccount } from '@/types/shareable-account';
+import { generateQRCode, downloadQRCode } from '@/utils/qr-generator';
 import { copyToClipboard, formatBankAccountForClipboard } from '@/utils/clipboard-handler';
-import { downloadQRCode, generateQRCode } from '@/utils/qr-generator';
 
-function QRDisplayContent() {
-  const { accountId } = useParams<{ accountId: string }>();
-  const { user } = useAuth();
-  const navigate = useNavigate();
+function ClaimQR() {
+  const { token } = useParams<{ token: string }>();
   const notifications = useNotifications();
-  const [account, setAccount] = useState<BankAccount | null>(null);
+  const [account, setAccount] = useState<ShareableAccount | null>(null);
   const [qrCodeUrl, setQrCodeUrl] = useState<string>('');
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string>('');
 
   useEffect(() => {
-    if (!user || !accountId) return;
+    if (!token) {
+      setError('Token inválido');
+      setLoading(false);
+      return;
+    }
 
     const fetchAccountAndGenerateQR = async () => {
       try {
-        const accountRef = doc(db, 'users', user.uid, 'bankAccounts', accountId);
-        const accountSnap = await getDoc(accountRef);
+        // Query shareableAccounts collection by token
+        const shareableAccountsRef = collection(db, 'shareableAccounts');
+        const q = query(shareableAccountsRef, where('token', '==', token));
+        const querySnapshot = await getDocs(q);
 
-        if (!accountSnap.exists()) {
-          notifications.show('Cuenta no encontrada', { severity: 'error' });
-          navigate('/dashboard');
+        if (querySnapshot.empty) {
+          setError('No se encontró una cuenta con este link. Es posible que haya expirado.');
+          setLoading(false);
           return;
         }
 
+        const accountDoc = querySnapshot.docs[0];
         const accountData = {
-          id: accountSnap.id,
-          ...accountSnap.data(),
-        } as BankAccount;
+          id: accountDoc.id,
+          ...accountDoc.data(),
+        } as ShareableAccount;
 
         setAccount(accountData);
 
@@ -58,14 +61,14 @@ function QRDisplayContent() {
         setQrCodeUrl(qrUrl);
       } catch (error) {
         console.error('Error fetching account:', error);
-        notifications.show('Error al cargar la cuenta', { severity: 'error' });
+        setError('Error al cargar la cuenta. Por favor, intenta nuevamente.');
       } finally {
         setLoading(false);
       }
     };
 
     fetchAccountAndGenerateQR();
-  }, [user, accountId, navigate, notifications]);
+  }, [token]);
 
   const handleDownload = () => {
     if (qrCodeUrl && account) {
@@ -94,30 +97,46 @@ function QRDisplayContent() {
   };
 
   if (loading) {
-    return <Loading />;
-  }
-
-  if (!account) {
     return (
       <Container maxWidth="md">
-        <Alert severity="error">Cuenta no encontrada</Alert>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            minHeight: '60vh',
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      </Container>
+    );
+  }
+
+  if (error || !account) {
+    return (
+      <Container maxWidth="md">
+        <meta name="title" content="Link no encontrado" />
+        <Box sx={{ mt: 4, mb: 4 }}>
+          <Alert severity="error">{error || 'Cuenta no encontrada'}</Alert>
+        </Box>
       </Container>
     );
   }
 
   return (
     <Container maxWidth="md">
-      <meta name="title" content="Código QR" />
+      <meta name="title" content="Tu Código QR" />
       <Box sx={{ mt: 4, mb: 4 }}>
-        <IconButton onClick={() => navigate('/dashboard')} sx={{ mb: 2 }}>
-          <ArrowBackIcon />
-        </IconButton>
-
         <Card>
           <CardContent>
             <Typography variant="h4" component="h1" gutterBottom align="center">
-              Código QR
+              Tu Código QR
             </Typography>
+
+            <Alert severity="info" sx={{ my: 3 }}>
+              Guarda este código QR para compartir tus datos bancarios fácilmente.
+            </Alert>
 
             <Box sx={{ my: 3 }}>
               <Typography variant="h6" gutterBottom>
@@ -131,6 +150,9 @@ function QRDisplayContent() {
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 Cuenta: {account.accountNumber}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Email: {account.email}
               </Typography>
             </Box>
 
@@ -149,9 +171,9 @@ function QRDisplayContent() {
               </Box>
             )}
 
-            <Alert severity="info" sx={{ mb: 3 }}>
-              Comparte este código QR. Cuando alguien lo escanee con su app de cámara o lector QR,
-              podrá ver los datos de tu cuenta y copiarlos directamente.
+            <Alert severity="success" sx={{ mb: 3 }}>
+              Cuando alguien escanee este código QR, podrá ver tus datos bancarios y copiarlos
+              directamente.
             </Alert>
 
             <Stack spacing={2}>
@@ -180,12 +202,4 @@ function QRDisplayContent() {
   );
 }
 
-function QRDisplay() {
-  return (
-    <ProtectedRoute>
-      <QRDisplayContent />
-    </ProtectedRoute>
-  );
-}
-
-export default QRDisplay;
+export default ClaimQR;

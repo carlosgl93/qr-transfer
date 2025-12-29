@@ -1,0 +1,1 @@
+import{j as r}from"./deepmerge-CTR-2iFl.js";import{L as s,N as a}from"./App-Cl4K1hj7.js";import{u as i}from"./useAuth-D9SyyZ3A.js";function f({children:t}){const{user:o,loading:e}=i();return e?r.jsx(s,{}):o?r.jsx(r.Fragment,{children:t}):r.jsx(a,{to:"/login",replace:!0})}export{f as P};

@@ -1,26 +1,36 @@
 import { useState } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Container,
-  MenuItem,
-  Stack,
-  TextField,
-  Typography,
-} from '@mui/material';
-import SaveIcon from '@mui/icons-material/Save';
-import ContentPasteIcon from '@mui/icons-material/ContentPaste';
+import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router';
+
+
+
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import ContentPasteIcon from '@mui/icons-material/ContentPaste';
+import LinkIcon from '@mui/icons-material/Link';
+import SaveIcon from '@mui/icons-material/Save';
+import { Alert, Box, Button, Card, CardContent, Container, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, IconButton, MenuItem, Stack, Switch, TextField, Typography } from '@mui/material';
+
+
+
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useNotifications } from '@toolpad/core/useNotifications';
-import { collection, addDoc, serverTimestamp, setDoc, doc } from 'firebase/firestore';
-import { db } from '@/config/firebase';
-import { useAuth } from '@/hooks/useAuth';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+
+
+
 import ProtectedRoute from '@/components/ProtectedRoute';
-import { bankAccountSchema, BankAccountFormData } from './schema';
+import { db } from '@/config/firebase';
+import { APP_DOMAIN } from '@/config/firebase';
+import { useAuth } from '@/hooks/useAuth';
+import { generateShareableToken, isAdmin } from '@/utils/admin';
+
+
+
+import { BankAccountFormData, bankAccountSchema } from './schema';
+
+
+
+
 
 const CHILEAN_BANKS = [
   'Banco de Chile',
@@ -52,6 +62,11 @@ function BankAccountFormContent() {
   const navigate = useNavigate();
   const notifications = useNotifications();
   const [loading, setLoading] = useState(false);
+  const [createShareableLink, setCreateShareableLink] = useState(false);
+  const [shareableLink, setShareableLink] = useState('');
+  const [linkDialogOpen, setLinkDialogOpen] = useState(false);
+  
+  const userIsAdmin = isAdmin(user?.email);
 
   const {
     control,
@@ -73,18 +88,24 @@ function BankAccountFormContent() {
 
   const parseClipboardData = (text: string): Partial<BankAccountFormData> | null => {
     try {
-      const lines = text.split('\n').map(line => line.trim()).filter(line => line);
+      const lines = text
+        .split('\n')
+        .map((line) => line.trim())
+        .filter((line) => line);
       const parsed: Partial<BankAccountFormData> = {};
 
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
-        
+
         // Check for RUT
         if (line.toLowerCase().includes('rut:')) {
           parsed.rut = line.split(':')[1]?.trim() || '';
         }
         // Check for account number
-        else if (line.toLowerCase().includes('número de cuenta:') || line.toLowerCase().includes('numero de cuenta:')) {
+        else if (
+          line.toLowerCase().includes('número de cuenta:') ||
+          line.toLowerCase().includes('numero de cuenta:')
+        ) {
           parsed.accountNumber = line.split(':')[1]?.trim() || '';
         }
         // Check for email
@@ -92,11 +113,11 @@ function BankAccountFormContent() {
           parsed.email = line;
         }
         // Check if line is a bank (matches CHILEAN_BANKS)
-        else if (CHILEAN_BANKS.some(bank => bank.toLowerCase() === line.toLowerCase())) {
+        else if (CHILEAN_BANKS.some((bank) => bank.toLowerCase() === line.toLowerCase())) {
           parsed.bankOrPlatform = line;
         }
         // Check if line is an account type
-        else if (ACCOUNT_TYPES.some(type => type.toLowerCase() === line.toLowerCase())) {
+        else if (ACCOUNT_TYPES.some((type) => type.toLowerCase() === line.toLowerCase())) {
           parsed.accountType = line;
         }
         // First line is likely the full name (if not already assigned)
@@ -115,7 +136,7 @@ function BankAccountFormContent() {
   const handlePasteFromClipboard = async () => {
     try {
       setLoading(true);
-      
+
       // Check if Clipboard API is available
       if (!navigator.clipboard || !navigator.clipboard.readText) {
         notifications.show('Tu navegador no soporta lectura del portapapeles', {
@@ -127,7 +148,7 @@ function BankAccountFormContent() {
       }
 
       const text = await navigator.clipboard.readText();
-      
+
       if (!text) {
         notifications.show('El portapapeles está vacío', {
           severity: 'info',
@@ -163,7 +184,7 @@ function BankAccountFormContent() {
       });
     } catch (error: any) {
       console.error('Error reading clipboard:', error);
-      
+
       if (error.name === 'NotAllowedError') {
         notifications.show('Permiso denegado para leer el portapapeles', {
           severity: 'error',
@@ -188,31 +209,50 @@ function BankAccountFormContent() {
 
     try {
       setLoading(true);
-      
-      // Add to user's private collection
-      const accountsRef = collection(db, 'users', user.uid, 'bankAccounts');
-      const docRef = await addDoc(accountsRef, {
-        ...data,
-        userId: user.uid,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-      });
 
-      // Also add to public sharedAccounts collection for QR scanning (with same ID)
-      await setDoc(doc(db, 'sharedAccounts', docRef.id), {
-        ...data,
-        userId: user.uid,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-      });
+      // If admin mode: create shareable link
+      if (userIsAdmin && createShareableLink) {
+        const token = generateShareableToken();
+        
+        // Save to shareableAccounts collection
+        const shareableAccountsRef = collection(db, 'shareableAccounts');
+        await addDoc(shareableAccountsRef, {
+          ...data,
+          token,
+          createdBy: user.uid,
+          createdAt: serverTimestamp(),
+          claimed: false,
+        });
 
-      notifications.show('Cuenta bancaria guardada exitosamente', {
-        severity: 'success',
-        autoHideDuration: 3000,
-      });
+        const link = `${APP_DOMAIN}/claim/${token}`;
+        setShareableLink(link);
+        setLinkDialogOpen(true);
 
-      reset();
-      navigate('/dashboard');
+        notifications.show('Link compartible creado exitosamente', {
+          severity: 'success',
+          autoHideDuration: 3000,
+        });
+
+        reset();
+        setCreateShareableLink(false);
+      } else {
+        // Normal mode: save to user's private collection
+        const accountsRef = collection(db, 'users', user.uid, 'bankAccounts');
+        await addDoc(accountsRef, {
+          ...data,
+          userId: user.uid,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+        });
+
+        notifications.show('Cuenta bancaria guardada exitosamente', {
+          severity: 'success',
+          autoHideDuration: 3000,
+        });
+
+        reset();
+        navigate('/dashboard');
+      }
     } catch (error: any) {
       console.error('Error saving bank account:', error);
       notifications.show('Error al guardar la cuenta bancaria', {
@@ -224,13 +264,37 @@ function BankAccountFormContent() {
     }
   };
 
+  const handleCopyLink = async () => {
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(shareableLink);
+        notifications.show('Link copiado al portapapeles', {
+          severity: 'success',
+          autoHideDuration: 2000,
+        });
+      }
+    } catch (error) {
+      notifications.show('Error al copiar link', { severity: 'error' });
+    }
+  };
+
+  const handleCloseDialog = () => {
+    setLinkDialogOpen(false);
+    setShareableLink('');
+  };
+
   return (
     <Container maxWidth="md">
       <meta name="title" content="Agregar Cuenta Bancaria" />
       <Box sx={{ mt: 4, mb: 4 }}>
         <Card>
           <CardContent>
-            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+              sx={{ mb: 2 }}
+            >
               <Typography variant="h4" component="h1">
                 Agregar Cuenta Bancaria
               </Typography>
@@ -244,10 +308,30 @@ function BankAccountFormContent() {
                 Pegar
               </Button>
             </Stack>
-            
+
             <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
               Ingresa los datos de tu cuenta bancaria o pega desde el portapapeles
             </Typography>
+
+            {userIsAdmin && (
+              <Box sx={{ mb: 3 }}>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={createShareableLink}
+                      onChange={(e) => setCreateShareableLink(e.target.checked)}
+                      disabled={loading}
+                    />
+                  }
+                  label="Crear link compartible (para pagos en efectivo)"
+                />
+                {createShareableLink && (
+                  <Alert severity="info" sx={{ mt: 2 }}>
+                    El link generado permitirá al cliente acceder a su código QR sin necesidad de crear una cuenta.
+                  </Alert>
+                )}
+              </Box>
+            )}
 
             <form onSubmit={handleSubmit(onSubmit)}>
               <Stack spacing={3}>
@@ -374,6 +458,37 @@ function BankAccountFormContent() {
           </CardContent>
         </Card>
       </Box>
+
+      {/* Shareable Link Dialog */}
+      <Dialog open={linkDialogOpen} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
+        <DialogTitle>
+          <Stack direction="row" alignItems="center" spacing={1}>
+            <LinkIcon />
+            <Typography variant="h6">Link Compartible Generado</Typography>
+          </Stack>
+        </DialogTitle>
+        <DialogContent>
+          <Alert severity="success" sx={{ mb: 2 }}>
+            Envía este link al cliente. Podrá acceder a su código QR en cualquier momento.
+          </Alert>
+          <Stack direction="row" spacing={1} alignItems="center">
+            <TextField
+              fullWidth
+              value={shareableLink}
+              InputProps={{
+                readOnly: true,
+              }}
+              variant="outlined"
+            />
+            <IconButton onClick={handleCopyLink} color="primary">
+              <ContentCopyIcon />
+            </IconButton>
+          </Stack>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog}>Cerrar</Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 }

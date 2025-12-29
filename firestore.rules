@@ -22,6 +22,15 @@ service cloud.firestore {
                             request.auth.uid == resource.data.userId; // Only owner can update/delete
     }
     
+    // Shareable accounts collection - for admin-generated links
+    // Public read, only authenticated users can create
+    match /shareableAccounts/{accountId} {
+      allow read: if true; // Anyone can read (for claim links)
+      allow create: if request.auth != null; // Only authenticated users (admin) can create
+      allow update, delete: if request.auth != null && 
+                            request.auth.uid == resource.data.createdBy; // Only creator can modify
+    }
+    
     // Deny all other access
     match /{document=**} {
       allow read, write: if false;
