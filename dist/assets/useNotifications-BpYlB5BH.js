@@ -1,1 +1,0 @@
-import{b as t}from"./hooks-BWlgxfag.js";import{N as r}from"./NotificationsContext-BH5vbCom.js";const e={show:()=>{throw new Error("Not supported on server side")},close:()=>{throw new Error("Not supported on server side")}};function i(){const o=t.useContext(r);return o||e}export{i as u};

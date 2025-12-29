@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router';
 
@@ -74,6 +74,7 @@ function BankAccountFormContent() {
     formState: { errors },
     reset,
     setValue,
+    watch,
   } = useForm<BankAccountFormData>({
     resolver: zodResolver(bankAccountSchema),
     defaultValues: {
@@ -85,6 +86,21 @@ function BankAccountFormContent() {
       email: user?.email || '',
     },
   });
+
+  // Watch for changes in accountType, bankOrPlatform, and rut
+  const accountType = watch('accountType');
+  const bankOrPlatform = watch('bankOrPlatform');
+  const rut = watch('rut');
+
+  // Auto-populate account number with RUT for Cuenta RUT or Banco Estado
+  useEffect(() => {
+    const isCuentaRUT = accountType === 'Cuenta RUT';
+    const isBancoEstado = bankOrPlatform === 'Banco Estado' || bankOrPlatform === 'BancoEstado';
+    
+    if ((isCuentaRUT || isBancoEstado) && rut) {
+      setValue('accountNumber', rut);
+    }
+  }, [accountType, bankOrPlatform, rut, setValue]);
 
   const parseClipboardData = (text: string): Partial<BankAccountFormData> | null => {
     try {

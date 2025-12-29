@@ -1,1 +1,0 @@
-import{j as t}from"./hooks-BWlgxfag.js";import{a as s,L as a,N as n}from"./App-BXi3ZNGz.js";function m({children:r}){const{user:e,loading:o}=s();return o?t.jsx(a,{}):e?t.jsx(t.Fragment,{children:r}):t.jsx(n,{to:"/login",replace:!0})}export{m as P};
