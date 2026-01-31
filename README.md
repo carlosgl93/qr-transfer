@@ -1,19 +1,12 @@
-# React-PWA v3 🚀🎉⚡️
-
-[![Analyses](https://github.com/suren-atoyan/react-pwa/actions/workflows/analyses.yml/badge.svg)](https://github.com/suren-atoyan/react-pwa/actions/workflows/analyses.yml)
-[![E2E Tests](https://github.com/suren-atoyan/react-pwa/actions/workflows/tests:e2e.yml/badge.svg)](https://github.com/suren-atoyan/react-pwa/actions/workflows/tests:e2e.yml)
-
-<a href="http://react-pwa.surenatoyan.com/" target="_blank" rel="noreferrer">
- <img src="./public/cover.png" title="React-PWA Starter Kit" alt="React-PWA cover image">
-</a>
+# QR Payment Code Generator
 
 ## 🌟 Overview
 
-**React-PWA** is an opinionated starter kit for building Progressive Web Applications with React. Designed to streamline development, it combines essential libraries, components, utilities, and developer tools to accelerate your workflow.
+**QR Payment Code Generator** is a web application for generating QR codes with embedded payment information. Built with modern web technologies, it provides a fast, reliable, and user-friendly interface for creating QR codes that can be used for digital payment transfers and transactions.
 
 ## 💡 Motivation
 
-Building a modern web application requires a robust setup, including routing, UI components, theming, error handling, a structured file system, testing tools, and performance optimizations. **React-PWA** provides a production-ready, minimal, and efficient environment for developers to focus on creating great applications.
+Digital payments require efficient, scannable solutions. This application simplifies the process of generating QR codes containing payment details, enabling quick and secure payment information sharing across various platforms and devices.
 
 ## ✨ Tech Stack & Features
 
@@ -23,17 +16,18 @@ Building a modern web application requires a robust setup, including routing, UI
 | [Vite](https://vitejs.dev/) | v6 | Fast build tool based on ES modules, Rollup, and esbuild |
 | [React](https://react.dev/) | v19 | Latest version with all modern features |
 | [TypeScript](https://www.typescriptlang.org/) | Latest | Type-safe JavaScript for better development |
-| [MUI](https://mui.com/) | v6 | Comprehensive UI framework with MUI |
+| [MUI](https://mui.com/) | v6 | Comprehensive UI framework for responsive design |
 
 ### Key Features
+- **QR Code Generation**: Create QR codes with payment information
 - **Routing**: [React Router v7](https://reactrouter.com/) for flexible client-side routing
 - **State Management**: [Jotai](https://jotai.org/) for simple, efficient state handling
 - **Theming**: Customizable dark/light mode with MUI [theme system](https://mui.com/material-ui/customization/theming/)
-- **Notifications**: Alert system with MUI Toolpad integration
 - **PWA Support**: Works offline and installs on any device
+- **Notifications**: Alert system with MUI Toolpad integration
 - **Hotkeys**: Built-in keyboard shortcuts for common actions
 - **Error Handling**: Graceful error boundaries with custom fallbacks
-- **Performance**: All green Lighthouse scores with optimized bundle size
+- **Performance**: Optimized bundle size and fast load times
 
 ### Developer Tools
 - **Testing**: Vitest for unit tests, Playwright for e2e tests
@@ -78,18 +72,18 @@ npm run build
 ## 📁 Project Structure
 
 ```
-react-pwa/
+qr-payment-code-generator/
 ├── ...
 ├── src/
-│   ├── components/     # Reusable UI components
+│   ├── components/     # Reusable UI components (QR preview, form inputs, etc.)
 │   ├── config/         # Application configuration
 │   ├── error-handling/ # Error management
 │   ├── hooks/          # Custom hooks
 │   ├── pages/          # Application pages/routes
 │   ├── routes/         # Routing configuration
-│   ├── sections/       # Self-contained application sections
+│   ├── sections/       # Self-contained sections (QR generator, payment form, etc.)
 │   ├── theme/          # Theme configuration
-│   └── utils/          # Utility functions
+│   └── utils/          # Utility functions (QR code generation, validation, etc.)
 └── ...
 ```
 
@@ -209,34 +203,17 @@ Place your environment variables in a `.env` file (prefixed with `VITE_`):
 
 ## ❓ FAQ
 
-### Why use a UI library?
-A UI library ensures consistency, accessibility, and development efficiency. Without one, teams would need to create and maintain basic components from scratch, leading to inconsistencies and wasted time.
-
-### Why Jotai for state management?
-React applications have different state management needs:
-- **Component-level state**: `useState` for local UI interactions
-- **Data-layer state**: `useQuery` or `Apollo` for remote data
-- **Cross-application state**: Jotai provides a minimal, elegant approach
-
-### What's the difference between components, sections, and pages?
-- **Components**: Reusable UI elements (`Button`, `List`, etc.)
-- **Sections**: Self-contained UI parts with their own logic (`Navigation`, `Sidebar`, etc.)
-- **Pages**: Root route components representing application views
+### How are QR codes generated?
+QR codes are created using industry-standard encoding libraries that embed payment information (amount, recipient, account details, etc.) into scannable QR code format.
 
 ### Why TypeScript?
-TypeScript reduces runtime errors, improves code maintainability, and enhances developer experience with static typing and better IDE support.
+TypeScript reduces runtime errors, improves code maintainability, and enhances developer experience with static typing and better IDE support—critical for handling payment-related data.
 
 ### Why use Prettier?
 Prettier enforces consistent style across all contributors, reducing discussions in PR reviews and ensuring code quality.
 
-## 🔗 Demo
-
-Check out the [live demo](https://react-pwa.surenatoyan.com/)
-
-<div>
- <img src="./public/demo-dark.png" width="280" alt="Dark theme demo"> 
- <img src="./public/demo-light.png" width="280" alt="Light theme demo">
-</div>
+### What payment formats are supported?
+The application generates QR codes compatible with common payment standards and digital wallet formats.
 
 ## 📄 License
 
