@@ -4,12 +4,10 @@ import { Button, Dialog, DialogContent, DialogTitle, Typography } from '@mui/mat
 import { Stack } from '@mui/system';
 
 import { useSidebar } from '@/sections/Sidebar/hooks';
-import { useThemeMode } from '@/theme';
 
 import { useHotKeysDialog } from './hooks';
 
 function HotKeys() {
-  const { toggle: toggleTheme } = useThemeMode();
   const { toggle: toggleSidebar } = useSidebar();
   const { isOpen, close, toggle: toggleHotKeysDialog } = useHotKeysDialog();
 
@@ -18,19 +16,12 @@ function HotKeys() {
   // And as you know we can't use hooks inside loops (read "Rules of Hooks" - https://reactjs.org/docs/hooks-rules.html).
   // There is always a workaround, but sometimes it's better to avoid premature and unnecessary optimizations :)
   useHotkeys('alt+s', toggleSidebar);
-  useHotkeys('alt+t', toggleTheme);
   useHotkeys('alt+k', toggleHotKeysDialog);
 
   return (
     <Dialog fullWidth maxWidth="xs" onClose={close} open={isOpen} data-pw="hotkeys-dialog">
       <DialogTitle>Hot Keys</DialogTitle>
       <DialogContent>
-        <Stack direction="row" alignItems="center" height={50} justifyContent="space-between">
-          <Typography>Toggle Theme</Typography>
-          <Button color="warning" variant="outlined" onClick={toggleTheme}>
-            alt + t
-          </Button>
-        </Stack>
         <Stack direction="row" alignItems="center" height={50} justifyContent="space-between">
           <Typography>Toggle Sidebar</Typography>
           <Button color="warning" variant="outlined" onClick={toggleSidebar}>

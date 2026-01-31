@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router';
 
-import ThemeIcon from '@mui/icons-material/InvertColors';
 import LogoutIcon from '@mui/icons-material/Logout';
 import MenuIcon from '@mui/icons-material/Menu';
 import { AppBar, IconButton, Stack, Toolbar, Tooltip, Typography } from '@mui/material';
@@ -8,10 +7,8 @@ import { AppBar, IconButton, Stack, Toolbar, Tooltip, Typography } from '@mui/ma
 import { title } from '@/config';
 import { useAuth } from '@/hooks/useAuth';
 import { useSidebar } from '@/sections/Sidebar/hooks';
-import { useThemeMode } from '@/theme';
 
 function Header() {
-  const { themeMode, toggle: toggleThemeMode } = useThemeMode();
   const { open: openSidebar } = useSidebar();
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
@@ -22,13 +19,7 @@ function Header() {
   };
 
   return (
-    <AppBar
-      position="static"
-      color="transparent"
-      elevation={2}
-      data-pw={`theme-${themeMode}`}
-      enableColorOnDark
-    >
+    <AppBar position="static" color="transparent" elevation={2} enableColorOnDark>
       <Toolbar>
         <Stack direction="row" justifyContent="space-between" alignItems="center" flex={1}>
           <Stack direction="row" gap={1} alignItems="center">
@@ -46,16 +37,6 @@ function Header() {
             </Typography>
           </Stack>
           <Stack direction="row" alignItems="center" gap={1}>
-            <Tooltip title="Cambiar tema" arrow>
-              <IconButton
-                color="info"
-                size="large"
-                onClick={toggleThemeMode}
-                data-pw="theme-toggle"
-              >
-                <ThemeIcon />
-              </IconButton>
-            </Tooltip>
             {user && (
               <Tooltip title="Cerrar sesión" arrow>
                 <IconButton color="info" size="large" onClick={handleSignOut}>
