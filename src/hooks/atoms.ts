@@ -1,6 +1,6 @@
+import { User } from 'firebase/auth';
 import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
-import { User } from 'firebase/auth';
 
 // Persist auth state
 export const userAtom = atomWithStorage<User | null>('qr-transfer-user', null);

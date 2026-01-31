@@ -1,21 +1,24 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router';
+
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import ErrorIcon from '@mui/icons-material/Error';
 import {
+  Alert,
   Box,
   Card,
   CardContent,
+  CircularProgress,
   Container,
   Stack,
   Typography,
-  Alert,
-  CircularProgress,
 } from '@mui/material';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import ErrorIcon from '@mui/icons-material/Error';
+
 import { doc, getDoc } from 'firebase/firestore';
+
 import { db } from '@/config/firebase';
 import { BankAccount } from '@/types/bank-account';
-import { formatBankAccountForClipboard, copyToClipboard } from '@/utils/clipboard-handler';
+import { copyToClipboard, formatBankAccountForClipboard } from '@/utils/clipboard-handler';
 
 type CopyStatus = 'loading' | 'success' | 'error';
 
@@ -95,7 +98,15 @@ function ScanLanding() {
                   </Typography>
 
                   {account && (
-                    <Box sx={{ mt: 2, p: 2, bgcolor: 'background.default', borderRadius: 1, width: '100%' }}>
+                    <Box
+                      sx={{
+                        mt: 2,
+                        p: 2,
+                        bgcolor: 'background.default',
+                        borderRadius: 1,
+                        width: '100%',
+                      }}
+                    >
                       <Typography variant="body2" component="pre" sx={{ whiteSpace: 'pre-wrap' }}>
                         {formatBankAccountForClipboard(account)}
                       </Typography>

@@ -1,13 +1,16 @@
-import { useAtom } from 'jotai';
 import { useCallback, useEffect } from 'react';
+
 import {
-  signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  signInWithPopup,
   signOut as firebaseSignOut,
   onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signInWithPopup,
 } from 'firebase/auth';
+import { useAtom } from 'jotai';
+
 import { auth, googleProvider } from '@/config/firebase';
+
 import { authErrorAtom, authLoadingAtom, userAtom } from './atoms';
 
 export function useAuth() {
@@ -32,8 +35,9 @@ export function useAuth() {
         setError(null);
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         setUser(userCredential.user);
-      } catch (err: any) {
-        setError(err.message || 'Failed to sign in');
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : 'Failed to sign in';
+        setError(message);
         throw err;
       } finally {
         setLoading(false);
@@ -49,8 +53,9 @@ export function useAuth() {
         setError(null);
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         setUser(userCredential.user);
-      } catch (err: any) {
-        setError(err.message || 'Failed to sign up');
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : 'Failed to sign up';
+        setError(message);
         throw err;
       } finally {
         setLoading(false);
@@ -65,8 +70,9 @@ export function useAuth() {
       setError(null);
       const userCredential = await signInWithPopup(auth, googleProvider);
       setUser(userCredential.user);
-    } catch (err: any) {
-      setError(err.message || 'Failed to sign in with Google');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to sign in with Google';
+      setError(message);
       throw err;
     } finally {
       setLoading(false);
@@ -79,8 +85,9 @@ export function useAuth() {
       setError(null);
       await firebaseSignOut(auth);
       setUser(null);
-    } catch (err: any) {
-      setError(err.message || 'Failed to sign out');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to sign out';
+      setError(message);
       throw err;
     } finally {
       setLoading(false);
