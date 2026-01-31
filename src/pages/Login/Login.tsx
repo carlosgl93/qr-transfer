@@ -1,5 +1,9 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router';
+
+import GoogleIcon from '@mui/icons-material/Google';
 import {
+  Alert,
   Box,
   Button,
   Card,
@@ -9,11 +13,10 @@ import {
   Stack,
   TextField,
   Typography,
-  Alert,
 } from '@mui/material';
-import GoogleIcon from '@mui/icons-material/Google';
-import { useNavigate } from 'react-router';
+
 import { useNotifications } from '@toolpad/core/useNotifications';
+
 import { useAuth } from '@/hooks/useAuth';
 
 function Login() {
@@ -41,7 +44,7 @@ function Login() {
         });
       }
       navigate('/dashboard');
-    } catch (err) {
+    } catch {
       // Error is already set in useAuth
     }
   };
@@ -54,7 +57,7 @@ function Login() {
         autoHideDuration: 3000,
       });
       navigate('/dashboard');
-    } catch (err) {
+    } catch {
       // Error is already set in useAuth
     }
   };

@@ -1,24 +1,27 @@
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router';
+
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import DownloadIcon from '@mui/icons-material/Download';
 import {
+  Alert,
   Box,
   Button,
   Card,
   CardContent,
+  CircularProgress,
   Container,
   Stack,
   Typography,
-  Alert,
-  CircularProgress,
 } from '@mui/material';
-import DownloadIcon from '@mui/icons-material/Download';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import { useParams } from 'react-router';
+
 import { useNotifications } from '@toolpad/core/useNotifications';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+
 import { db } from '@/config/firebase';
 import { ShareableAccount } from '@/types/shareable-account';
-import { generateQRCode, downloadQRCode } from '@/utils/qr-generator';
 import { copyToClipboard, formatBankAccountForClipboard } from '@/utils/clipboard-handler';
+import { downloadQRCode, generateQRCode } from '@/utils/qr-generator';
 
 function ClaimQR() {
   const { token } = useParams<{ token: string }>();
