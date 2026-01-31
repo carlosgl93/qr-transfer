@@ -1,22 +1,34 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router';
-
-
 
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import ContentPasteIcon from '@mui/icons-material/ContentPaste';
 import LinkIcon from '@mui/icons-material/Link';
 import SaveIcon from '@mui/icons-material/Save';
-import { Alert, Box, Button, Card, CardContent, Container, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, IconButton, MenuItem, Stack, Switch, TextField, Typography } from '@mui/material';
-
-
+import {
+  Alert,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControlLabel,
+  IconButton,
+  MenuItem,
+  Stack,
+  Switch,
+  TextField,
+  Typography,
+} from '@mui/material';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNotifications } from '@toolpad/core/useNotifications';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
-
-
 
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { db } from '@/config/firebase';
@@ -24,13 +36,7 @@ import { APP_DOMAIN } from '@/config/firebase';
 import { useAuth } from '@/hooks/useAuth';
 import { generateShareableToken, isAdmin } from '@/utils/admin';
 
-
-
 import { BankAccountFormData, bankAccountSchema } from './schema';
-
-
-
-
 
 const CHILEAN_BANKS = [
   'Banco de Chile',
@@ -65,7 +71,7 @@ function BankAccountFormContent() {
   const [createShareableLink, setCreateShareableLink] = useState(false);
   const [shareableLink, setShareableLink] = useState('');
   const [linkDialogOpen, setLinkDialogOpen] = useState(false);
-  
+
   const userIsAdmin = isAdmin(user?.email);
 
   const {
@@ -96,7 +102,7 @@ function BankAccountFormContent() {
   useEffect(() => {
     const isCuentaRUT = accountType === 'Cuenta RUT';
     const isBancoEstado = bankOrPlatform === 'Banco Estado' || bankOrPlatform === 'BancoEstado';
-    
+
     if ((isCuentaRUT || isBancoEstado) && rut) {
       setValue('accountNumber', rut);
     }
@@ -198,10 +204,10 @@ function BankAccountFormContent() {
         severity: 'success',
         autoHideDuration: 3000,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error reading clipboard:', error);
 
-      if (error.name === 'NotAllowedError') {
+      if (error instanceof Error && error.name === 'NotAllowedError') {
         notifications.show('Permiso denegado para leer el portapapeles', {
           severity: 'error',
           autoHideDuration: 4000,
@@ -229,7 +235,7 @@ function BankAccountFormContent() {
       // If admin mode: create shareable link
       if (userIsAdmin && createShareableLink) {
         const token = generateShareableToken();
-        
+
         // Save to shareableAccounts collection
         const shareableAccountsRef = collection(db, 'shareableAccounts');
         await addDoc(shareableAccountsRef, {
@@ -269,7 +275,7 @@ function BankAccountFormContent() {
         reset();
         navigate('/dashboard');
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error saving bank account:', error);
       notifications.show('Error al guardar la cuenta bancaria', {
         severity: 'error',
@@ -289,7 +295,7 @@ function BankAccountFormContent() {
           autoHideDuration: 2000,
         });
       }
-    } catch (error) {
+    } catch {
       notifications.show('Error al copiar link', { severity: 'error' });
     }
   };
@@ -311,12 +317,14 @@ function BankAccountFormContent() {
               alignItems="center"
               sx={{ mb: 2 }}
             >
-              <Typography  sx={{
-                lg: { fontSize: '2.5rem' },
-                md: { fontSize: '2rem' },
-                sm: { fontSize: '1.5rem' },
-                xs: { fontSize: '1.2rem' },
-              }}>
+              <Typography
+                sx={{
+                  lg: { fontSize: '2.5rem' },
+                  md: { fontSize: '2rem' },
+                  sm: { fontSize: '1.5rem' },
+                  xs: { fontSize: '1.2rem' },
+                }}
+              >
                 Agregar Cuenta Bancaria
               </Typography>
               <Button
@@ -348,7 +356,8 @@ function BankAccountFormContent() {
                 />
                 {createShareableLink && (
                   <Alert severity="info" sx={{ mt: 2 }}>
-                    El link generado permitirá al cliente acceder a su código QR sin necesidad de crear una cuenta.
+                    El link generado permitirá al cliente acceder a su código QR sin necesidad de
+                    crear una cuenta.
                   </Alert>
                 )}
               </Box>

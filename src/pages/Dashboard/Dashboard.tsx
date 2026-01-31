@@ -1,5 +1,11 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router';
+
+import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
+import QrCodeIcon from '@mui/icons-material/QrCode';
 import {
+  Alert,
   Box,
   Button,
   Card,
@@ -9,19 +15,16 @@ import {
   IconButton,
   Stack,
   Typography,
-  Alert,
 } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import QrCodeIcon from '@mui/icons-material/QrCode';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { useNavigate } from 'react-router';
+
 import { useNotifications } from '@toolpad/core/useNotifications';
-import { collection, query, getDocs, deleteDoc, doc } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDocs, query } from 'firebase/firestore';
+
+import Loading from '@/components/Loading';
+import ProtectedRoute from '@/components/ProtectedRoute';
 import { db } from '@/config/firebase';
 import { useAuth } from '@/hooks/useAuth';
 import { BankAccount } from '@/types/bank-account';
-import Loading from '@/components/Loading';
-import ProtectedRoute from '@/components/ProtectedRoute';
 
 function DashboardContent() {
   const { user } = useAuth();

@@ -1,7 +1,5 @@
 import { Route } from 'react-router';
 
-
-
 import type { Theme } from '@mui/material';
 
 import { Routes } from '../types';

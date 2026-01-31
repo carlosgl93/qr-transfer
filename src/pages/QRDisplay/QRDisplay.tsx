@@ -1,19 +1,23 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
-
-
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DownloadIcon from '@mui/icons-material/Download';
-import { Alert, Box, Button, Card, CardContent, Container, IconButton, Stack, Typography } from '@mui/material';
-
-
+import {
+  Alert,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Container,
+  IconButton,
+  Stack,
+  Typography,
+} from '@mui/material';
 
 import { useNotifications } from '@toolpad/core/useNotifications';
 import { doc, getDoc } from 'firebase/firestore';
-
-
 
 import Loading from '@/components/Loading';
 import ProtectedRoute from '@/components/ProtectedRoute';
