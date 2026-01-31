@@ -10,13 +10,14 @@ import {
   SwipeableDrawer,
 } from '@mui/material';
 
+import { useAuth } from '@/hooks/useAuth';
 import routes from '@/routes';
 
 import { useSidebar } from './hooks';
 
 function Sidebar() {
   const { isOpen, open, close } = useSidebar();
-
+  const isAuthenticated = useAuth().user;
   return (
     <SwipeableDrawer
       anchor="left"
@@ -29,7 +30,15 @@ function Sidebar() {
     >
       <List sx={{ width: 250, pt: (theme) => `${theme.mixins.toolbar.minHeight}px` }}>
         {routes
-          .filter((route) => route.title)
+          .filter((route) => {
+            if (route.path === '/login' || route.path === '/signup') {
+              return !isAuthenticated;
+            }
+            if ((route.path === '/dashboard' || route.path === '/add-account') && isAuthenticated) {
+              return route.title;
+            }
+            return route.title;
+          })
           .map(({ path, title, icon: Icon }) => (
             <ListItem sx={{ p: 0 }} key={path} onClick={close}>
               <ListItemButton component={Link} to={path as string}>
