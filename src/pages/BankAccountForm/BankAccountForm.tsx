@@ -311,7 +311,12 @@ function BankAccountFormContent() {
               alignItems="center"
               sx={{ mb: 2 }}
             >
-              <Typography variant="h4" component="h1">
+              <Typography  sx={{
+                lg: { fontSize: '2.5rem' },
+                md: { fontSize: '2rem' },
+                sm: { fontSize: '1.5rem' },
+                xs: { fontSize: '1.2rem' },
+              }}>
                 Agregar Cuenta Bancaria
               </Typography>
               <Button
