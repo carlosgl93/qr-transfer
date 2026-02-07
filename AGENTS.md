@@ -80,19 +80,19 @@ This will:
 ### Manual Setup
 ```bash
 # Install dependencies
-npm install
+pnpm install
 
 # Create .env file (see Environment Variables section)
 cp .env.example .env
 
 # Start emulators
-npm run emulators &
+pnpm run emulators &
 
 # Wait for emulators, then seed database
-npm run seed:db
+pnpm run seed:db
 
 # Start development server
-npm run dev
+ppnpm dev
 ```
 
 ---
@@ -133,16 +133,16 @@ VITE_TEST_USER_PASSWORD=TestUser123!
 
 | Command | Description |
 |---------|-------------|
-| `npm run dev` | Start development server (port 5173) |
-| `npm run build` | Build for production |
-| `npm run preview` | Preview production build |
-| `npm run emulators` | Start Firebase emulators |
-| `npm run seed:db` | Seed test data to emulators |
-| `npm run lint:check` | Run ESLint |
-| `npm run prettier:check` | Check code formatting |
-| `npm run ts:check` | TypeScript type checking |
-| `npm run test:unit` | Run unit tests |
-| `npm run test:e2e` | Run end-to-end tests |
+| `ppnpm dev` | Start development server (port 5173) |
+| `ppnpm build` | Build for production |
+| `pnpm run preview` | Preview production build |
+| `pnpm run emulators` | Start Firebase emulators |
+| `pnpm run seed:db` | Seed test data to emulators |
+| `pnpm run lint:check` | Run ESLint |
+| `pnpm run prettier:check` | Check code formatting |
+| `pnpm run ts:check` | TypeScript type checking |
+| `pnpm run test:unit` | Run unit tests |
+| `pnpm run test:e2e` | Run end-to-end tests |
 
 ---
 
@@ -369,9 +369,9 @@ kill -9 <PID>
 **Seed script failing:**
 ```bash
 # Make sure emulators are running first
-npm run emulators &
+pnpm run emulators &
 sleep 5
-npm run seed:db
+pnpm run seed:db
 ```
 
 **Authentication errors in production:**
@@ -385,7 +385,7 @@ npm run seed:db
 ### Build and Deploy
 ```bash
 # Build the app
-npm run build
+ppnpm build
 
 # Deploy to Firebase Hosting
 firebase deploy --only hosting

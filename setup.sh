@@ -9,7 +9,7 @@ echo "🚀 Setting up QR Transfer workspace..."
 
 # 1. Install dependencies
 echo "📦 Installing dependencies..."
-npm install
+pnpm install
 
 # 2. Create .env file with Firebase configuration
 echo "🔧 Creating .env file..."
@@ -33,7 +33,7 @@ echo "   - Auth: http://localhost:9101"
 echo "   - Functions: http://localhost:5003"
 echo "   - UI: http://localhost:4002"
 
-npm run emulators > emulators.log 2>&1 &
+pnpm run emulators > emulators.log 2>&1 &
 EMULATOR_PID=$!
 echo "Emulators started with PID: $EMULATOR_PID"
 
@@ -43,7 +43,7 @@ sleep 10
 
 # 5. Seed the database
 echo "🌱 Seeding database with test data..."
-npm run seed:db
+pnpm run seed:db
 
 # 6. Start development server
 echo "✅ Setup complete! Starting dev server..."
@@ -54,4 +54,4 @@ echo "   - Firebase UI: http://localhost:4002"
 echo "   - Test user: test@qr-transfers.com / TestUser123!"
 echo ""
 
-npm run dev
+pnpm dev

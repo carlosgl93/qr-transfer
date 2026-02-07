@@ -50,7 +50,7 @@ If you prefer manual control:
 
 ```bash
 # 1. Install dependencies
-npm install
+pnpm install
 
 # 2. Create .env file
 cat > .env << 'ENVEOF'
@@ -67,16 +67,16 @@ VITE_TEST_USER_PASSWORD=TestUser123!
 ENVEOF
 
 # 3. Start emulators in background
-npm run emulators > emulators.log 2>&1 &
+pnpm run emulators > emulators.log 2>&1 &
 
 # 4. Wait for emulators to start
 sleep 10
 
 # 5. Seed test data
-npm run seed:db
+pnpm run seed:db
 
 # 6. Start dev server
-npm run dev
+ppnpm dev
 ```
 
 ## Port Configuration
@@ -112,16 +112,16 @@ tail -f emulators.log
 
 # Restart emulators
 pkill -f firebase
-npm run emulators > emulators.log 2>&1 &
+pnpm run emulators > emulators.log 2>&1 &
 ```
 
 ### Seed Script Failing
 
 ```bash
 # Make sure emulators are running first
-npm run emulators > emulators.log 2>&1 &
+pnpm run emulators > emulators.log 2>&1 &
 sleep 10
-npm run seed:db
+pnpm run seed:db
 ```
 
 ## Next Steps
@@ -135,12 +135,12 @@ npm run seed:db
 ## Available Commands
 
 ```bash
-npm run dev          # Start dev server
-npm run emulators    # Start Firebase emulators
-npm run seed:db      # Seed test data
-npm run build        # Build for production
-npm run lint:check   # Run linter
-npm run test:unit    # Run unit tests
+ppnpm dev          # Start dev server
+pnpm run emulators    # Start Firebase emulators
+pnpm run seed:db      # Seed test data
+ppnpm build        # Build for production
+pnpm run lint:check   # Run linter
+pnpm run test:unit    # Run unit tests
 ```
 
 ## Documentation
