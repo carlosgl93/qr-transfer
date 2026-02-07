@@ -442,3 +442,26 @@ MIT
 
 **Last Updated**: 2026-02-07
 **Version**: 1.0.0 (Mercado Pago Integration)
+
+---
+
+## Firestore Security Rules
+
+The project uses different Firestore rules for production and development:
+
+### Production Rules (`firestore.rules`)
+- Strict security: Users can only access their own data
+- Shareable accounts are publicly readable
+- Used when deploying to Firebase Hosting
+
+### Development Rules (`firestore.dev.rules`)
+- Permissive: All authenticated users can read/write
+- Used automatically by Firebase emulators
+- Allows seeding scripts to populate test data
+- **Never deploy these rules to production**
+
+To deploy production rules:
+```bash
+firebase deploy --only firestore:rules
+```
+

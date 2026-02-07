@@ -19,7 +19,8 @@
   },
   "emulators": {
     "firestore": {
-      "port": 8082
+      "port": 8082,
+      "rules": "firestore.dev.rules"
     },
     "auth": {
       "port": 9101

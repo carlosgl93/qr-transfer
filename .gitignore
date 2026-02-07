@@ -28,3 +28,6 @@ dist-ssr
 /blob-report/
 /playwright/.cache/
 dist
+# Emulator data
+*-debug.log
+ui-debug.log
