@@ -45,6 +45,10 @@ const routes: Routes = [
     path: '/claim/:token',
   },
   {
+    component: asyncComponentLoader(() => import('@/pages/PaymentSuccess')),
+    path: '/payment-success',
+  },
+  {
     component: asyncComponentLoader(() => import('@/pages/NotFound')),
     path: '*',
   },

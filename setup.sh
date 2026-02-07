@@ -1,23 +1,19 @@
 #!/bin/bash
 
-# QR Transfers Setup Script
-# This script initializes the project with dependencies and environment configuration
+# QR Transfer - Workspace Setup Script
+# This script runs automatically when a new Conductor workspace is created
 
-set -e  # Exit on any error
+set -e  # Exit on error
 
-echo "🚀 Starting QR Transfers setup..."
+echo "🚀 Setting up QR Transfer workspace..."
 
-# Step 1: Install dependencies
-echo "📦 Installing dependencies with pnpm..."
-pnpm i
+# 1. Install dependencies
+echo "📦 Installing dependencies..."
+npm install
 
-# Step 2: Create .env file
-echo "⚙️  Creating .env file..."
-cat > .env << 'EOF'
-# Local environment variables
-# This file is ignored by git for security
-
-# Firebase Configuration
+# 2. Create .env file with Firebase configuration
+echo "🔧 Creating .env file..."
+cat > .env << 'ENVEOF'
 VITE_FIREBASE_API_KEY=AIzaSyDyPocH5O7uwMRBRa4yoei_SX_IQnYdaZ0
 VITE_FIREBASE_AUTH_DOMAIN=qr-transfers.firebaseapp.com
 VITE_FIREBASE_PROJECT_ID=qr-transfers
@@ -25,15 +21,37 @@ VITE_FIREBASE_STORAGE_BUCKET=qr-transfers.firebasestorage.app
 VITE_FIREBASE_MESSAGING_SENDER_ID=208871776
 VITE_FIREBASE_APP_ID=1:208871776:web:1b91c71aba571b000d7e05
 VITE_FIREBASE_MEASUREMENT_ID=G-D8L18HJ2V2
-
-# App Domain - Production URL for QR codes
 VITE_APP_DOMAIN=https://qr-transfers.web.app
-EOF
+VITE_TEST_USER_EMAIL=test@qr-transfers.com
+VITE_TEST_USER_PASSWORD=TestUser123!
+ENVEOF
 
-echo "✅ Setup complete!"
+# 3. Start Firebase emulators in background
+echo "🔥 Starting Firebase emulators..."
+echo "   - Firestore: http://localhost:8082"
+echo "   - Auth: http://localhost:9101"
+echo "   - Functions: http://localhost:5003"
+echo "   - UI: http://localhost:4002"
+
+npm run emulators > emulators.log 2>&1 &
+EMULATOR_PID=$!
+echo "Emulators started with PID: $EMULATOR_PID"
+
+# 4. Wait for emulators to be ready
+echo "⏳ Waiting for emulators to start..."
+sleep 10
+
+# 5. Seed the database
+echo "🌱 Seeding database with test data..."
+npm run seed:db
+
+# 6. Start development server
+echo "✅ Setup complete! Starting dev server..."
 echo ""
-echo "Next steps:"
-echo "  • Review the .env file to ensure all values are correct"
-echo "  • Run: pnpm dev (to start development server)"
-echo "  • Run: pnpm build (to build for production)"
+echo "🎉 Workspace ready!"
+echo "   - Dev server: http://localhost:5173"
+echo "   - Firebase UI: http://localhost:4002"
+echo "   - Test user: test@qr-transfers.com / TestUser123!"
 echo ""
+
+npm run dev

@@ -260,20 +260,18 @@ function BankAccountFormContent() {
       } else {
         // Normal mode: save to user's private collection
         const accountsRef = collection(db, 'users', user.uid, 'bankAccounts');
-        await addDoc(accountsRef, {
+        const docRef = await addDoc(accountsRef, {
           ...data,
           userId: user.uid,
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp(),
         });
 
-        notifications.show('Cuenta bancaria guardada exitosamente', {
-          severity: 'success',
-          autoHideDuration: 3000,
-        });
+        // Store accountId in sessionStorage for payment success page
+        sessionStorage.setItem('pendingAccountId', docRef.id);
 
-        reset();
-        navigate('/dashboard');
+        // Redirect to Mercado Pago payment
+        window.location.href = 'https://mpago.la/2cGoFVs';
       }
     } catch (error: unknown) {
       console.error('Error saving bank account:', error);
