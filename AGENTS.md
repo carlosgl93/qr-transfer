@@ -57,7 +57,6 @@ phoenix/
 │   └── seed-db.ts           # Database seeding script
 ├── firebase.json            # Firebase configuration
 ├── firestore.rules          # Firestore security rules
-├── setup.sh                 # Workspace setup script
 └── package.json
 ```
 
@@ -66,16 +65,13 @@ phoenix/
 ## Getting Started
 
 ### Quick Setup (Automatic)
-```bash
-./setup.sh
-```
 
-This will:
-1. Install dependencies
-2. Create `.env` file
-3. Start Firebase emulators
-4. Seed test data
-5. Start dev server
+Conductor automatically handles workspace setup when you create a new workspace. This includes:
+1. Installing dependencies (pnpm)
+2. Creating `.env` file with Firebase configuration
+3. Starting Firebase emulators
+4. Seeding test data
+5. Starting development server
 
 ### Manual Setup
 ```bash
@@ -92,7 +88,7 @@ pnpm run emulators &
 pnpm run seed:db
 
 # Start development server
-ppnpm dev
+pnpm dev
 ```
 
 ---

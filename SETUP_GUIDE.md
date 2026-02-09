@@ -1,19 +1,14 @@
 # QR Transfer - Quick Setup Guide
 
-## Automatic Setup (Recommended)
+## Conductor Workspace Setup
 
-Run the setup script in your Conductor workspace:
+Conductor automatically handles workspace initialization when you create or open this workspace:
 
-```bash
-./setup.sh
-```
-
-This will automatically:
-1. ✅ Install all dependencies
-2. ✅ Create `.env` file with Firebase config
-3. ✅ Start Firebase emulators
-4. ✅ Seed test data
-5. ✅ Start development server
+✅ Installs all dependencies (pnpm)
+✅ Creates `.env` file with Firebase config
+✅ Starts Firebase emulators
+✅ Seeds test data
+✅ Starts development server
 
 ## What You Get
 
@@ -76,7 +71,7 @@ sleep 10
 pnpm run seed:db
 
 # 6. Start dev server
-ppnpm dev
+pnpm dev
 ```
 
 ## Port Configuration

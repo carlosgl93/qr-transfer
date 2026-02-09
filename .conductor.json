@@ -1,10 +1,6 @@
 {
   "name": "QR Transfer",
   "description": "React + Firebase QR code generator for Chilean bank accounts",
-  "onWorkspaceCreate": {
-    "command": "./setup.sh",
-    "description": "Initialize workspace with dependencies, emulators, and test data"
-  },
   "ports": {
     "dev": 5173,
     "emulator-ui": 4002,
