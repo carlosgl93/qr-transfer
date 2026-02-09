@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router';
 
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import ContentPasteIcon from '@mui/icons-material/ContentPaste';
@@ -65,7 +64,6 @@ const ACCOUNT_TYPES = [
 
 function BankAccountFormContent() {
   const { user } = useAuth();
-  const navigate = useNavigate();
   const notifications = useNotifications();
   const [loading, setLoading] = useState(false);
   const [createShareableLink, setCreateShareableLink] = useState(false);
